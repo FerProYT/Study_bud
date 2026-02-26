@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Study-Bit 🇨🇱 — Tu Mascota de Colegio</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #04080f;
+    --surface: #080f1a;
+    --surface2: #0d1525;
+    --border: #142030;
+    --accent: #38bdf8;
+    --accent2: #f97316;
+    --accent3: #facc15;
+    --green: #4ade80;
+    --pink: #f472b6;
+    --purple: #c084fc;
+    --red: #f87171;
+    --text: #c8dff0;
+    --muted: #2a4060;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; padding: 2rem 1rem 3rem; overflow-x: hidden;
+  }
+
+  body::before {
+    content: ''; position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(56,189,248,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(56,189,248,0.025) 1px, transparent 1px);
+    background-size: 36px 36px; pointer-events: none; z-index: 0;
+  }
+
+  body::after {
+    content: ''; position: fixed; inset: 0;
+    background:
+      radial-gradient(ellipse 55% 35% at 10% 5%, rgba(56,189,248,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 45% at 90% 95%, rgba(250,204,21,0.04) 0%, transparent 60%);
+    pointer-events: none; z-index: 0;
+  }
+
+  .container { position: relative; z-index: 1; max-width: 720px; width: 100%; }
+
+  /* HEADER */
+  header { text-align: center; margin-bottom: 1.8rem; }
+
+  .header-tags { display: flex; gap: 0.4rem; justify-content: center; flex-wrap: wrap; margin-bottom: 0.7rem; }
+
+  .tag {
+    font-size: 0.53rem; letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid; padding: 0.15rem 0.6rem; border-radius: 100px;
+  }
+  .tag-cl    { color: var(--green);   border-color: rgba(74,222,128,0.3); }
+  .tag-chile { color: #ef4444;        border-color: rgba(239,68,68,0.3); }
+  .tag-mineduc { color: var(--accent3); border-color: rgba(250,204,21,0.3); }
+
+  h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(2rem, 7vw, 3.8rem); font-weight: 900; color: var(--accent);
+    text-shadow: 0 0 30px rgba(56,189,248,0.5), 0 0 70px rgba(56,189,248,0.15);
+    letter-spacing: 0.05em;
+  }
+  .subtitle { font-size: 0.62rem; color: var(--muted); letter-spacing: 0.2em; margin-top: 0.3rem; }
+
+  /* PET STAGE */
+  .pet-stage {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 2rem 1.5rem 1.8rem;
+    margin-bottom: 1rem; text-align: center; position: relative; overflow: hidden;
+  }
+
+  .pet-stage .fml {
+    position: absolute; font-size: 0.68rem; opacity: 0.055;
+    color: var(--accent); pointer-events: none; user-select: none;
+  }
+
+  .pet-stage::before, .pet-stage::after {
+    content: ''; position: absolute; width: 16px; height: 16px;
+    border-color: var(--accent); border-style: solid; opacity: 0.4;
+  }
+  .pet-stage::before { top: 8px; left: 8px; border-width: 2px 0 0 2px; }
+  .pet-stage::after  { bottom: 8px; right: 8px; border-width: 0 2px 2px 0; }
+
+  .pet-wrap { position: relative; display: inline-block; margin-bottom: 1rem; }
+
+  .pet-wrap::before {
+    content: ''; position: absolute; top: 50%; left: 50%;
+    width: 200px; height: 200px; margin: -100px 0 0 -100px;
+    border-radius: 50%; border: 1px solid rgba(56,189,248,0.1);
+    animation: pulse-ring 3s ease-out infinite; pointer-events: none;
+  }
+
+  @keyframes pulse-ring {
+    0%   { transform: scale(0.75); opacity: 0.7; }
+    100% { transform: scale(1.4);  opacity: 0;   }
+  }
+
+  .pet-svg {
+    width: 165px; height: 165px; cursor: pointer;
+    filter: drop-shadow(0 0 18px rgba(56,189,248,0.35));
+    animation: float 4s ease-in-out infinite; transition: filter 0.3s;
+  }
+  .pet-svg:hover { filter: drop-shadow(0 0 35px rgba(56,189,248,0.7)); }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0);   }
+    50%     { transform: translateY(-9px); }
+  }
+
+  .pet-name { font-family: 'Orbitron', sans-serif; font-size: 1.5rem; font-weight: 700; color: var(--accent); margin-bottom: 0.2rem; }
+  .pet-rank { font-size: 0.6rem; color: var(--accent3); letter-spacing: 0.18em; text-transform: uppercase; margin-bottom: 0.7rem; }
+
+  .thought-bubble {
+    display: inline-block; font-size: 0.72rem; color: var(--text);
+    background: rgba(56,189,248,0.06); border: 1px solid rgba(56,189,248,0.18);
+    border-radius: 100px; padding: 0.35rem 1.1rem;
+    margin-bottom: 1.5rem; min-width: 240px; max-width: 100%;
+  }
+  .thought-bubble::before { content: '💭'; margin-right: 0.4rem; }
+
+  /* XP BAR */
+  .xp-row { display: flex; align-items: center; gap: 0.8rem; }
+  .xp-lbl { font-size: 0.6rem; color: var(--muted); white-space: nowrap; }
+  .xp-track {
+    flex: 1; height: 10px; background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border); border-radius: 2px; overflow: hidden; position: relative;
+  }
+  .xp-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--accent), #7dd3fc);
+    box-shadow: 0 0 12px rgba(56,189,248,0.5);
+    transition: width 0.8s cubic-bezier(0.22,1,0.36,1);
+  }
+  .xp-track::after {
+    content: ''; position: absolute; inset: 0;
+    background-image: repeating-linear-gradient(
+      90deg, transparent, transparent 14px, rgba(4,8,15,0.5) 14px, rgba(4,8,15,0.5) 15px
+    );
+    pointer-events: none;
+  }
+  .xp-rval { font-size: 0.6rem; color: var(--accent); white-space: nowrap; }
+
+  /* STATS */
+  .stats-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.6rem; margin-bottom: 1rem; }
+
+  .stat-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 4px; padding: 0.8rem 0.4rem; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .stat-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0;
+    height: 2px; background: var(--accent); opacity: 0.3;
+  }
+  .stat-icon  { font-size: 1.1rem; display: block; margin-bottom: 0.3rem; }
+  .stat-value { font-family: 'Orbitron',sans-serif; font-size: 1.05rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; margin-bottom: 0.3rem; }
+  .stat-name  { font-size: 0.52rem; color: var(--muted); letter-spacing: 0.07em; text-transform: uppercase; line-height: 1.4; }
+
+  /* SUBJECT TABS */
+  .subject-section { background: var(--surface); border: 1px solid var(--border); border-radius: 5px; margin-bottom: 1rem; overflow: hidden; }
+
+  .subject-tabs {
+    display: flex; flex-wrap: wrap; gap: 0; border-bottom: 1px solid var(--border);
+    background: rgba(0,0,0,0.3);
+  }
+
+  .stab {
+    flex: 1 0 auto;
+    padding: 0.5rem 0.6rem;
+    font-size: 0.58rem; letter-spacing: 0.05em;
+    cursor: pointer; border: none; background: transparent;
+    color: var(--muted); font-family: 'Share Tech Mono', monospace;
+    border-bottom: 2px solid transparent;
+    transition: all 0.15s; text-align: center; white-space: nowrap;
+  }
+  .stab:hover { color: var(--text); background: rgba(56,189,248,0.04); }
+  .stab.active { color: var(--accent3); border-bottom-color: var(--accent3); background: rgba(250,204,21,0.04); }
+
+  .subject-body { padding: 1.2rem; }
+
+  .subject-header {
+    display: flex; align-items: center; gap: 0.6rem;
+    margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+  }
+  .subject-icon { font-size: 1.3rem; }
+  .subject-name { font-family: 'Orbitron',sans-serif; font-size: 0.85rem; font-weight: 700; }
+  .subject-xp-today { margin-left: auto; font-size: 0.6rem; color: var(--green); }
+
+  /* HABITS GRID */
+  .habits-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; }
+  @media (max-width: 480px) { .habits-grid { grid-template-columns: 1fr; } }
+
+  .habit-item {
+    border: 1px solid var(--border); border-radius: 4px; padding: 0.75rem;
+    cursor: pointer; transition: all 0.15s;
+    display: flex; align-items: flex-start; gap: 0.65rem;
+    background: rgba(0,0,0,0.2); user-select: none;
+  }
+  .habit-item:hover { border-color: rgba(56,189,248,0.3); background: rgba(56,189,248,0.03); }
+  .habit-item.done  { border-color: rgba(74,222,128,0.4); background: rgba(74,222,128,0.04); }
+
+  .habit-cb {
+    width: 17px; height: 17px; border: 1px solid var(--muted); border-radius: 3px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0; margin-top: 2px; font-size: 0.62rem; color: #000; transition: all 0.15s;
+  }
+  .habit-item.done .habit-cb { background: var(--green); border-color: var(--green); }
+
+  .habit-body  { flex: 1; }
+  .habit-label { font-size: 0.7rem; color: var(--text); line-height: 1.4; display: block; margin-bottom: 0.2rem; }
+  .habit-item.done .habit-label { color: var(--muted); text-decoration: line-through; }
+  .habit-xp { font-size: 0.57rem; color: var(--green); }
+
+  /* EXERCISE COUNTER */
+  .ex-counter {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 1.2rem; margin-bottom: 1rem;
+  }
+
+  .panel-title {
+    font-size: 0.57rem; color: var(--accent); letter-spacing: 0.2em; text-transform: uppercase;
+    margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .panel-title::before { content: '◈'; color: var(--accent2); font-size: 0.6rem; }
+
+  .counter-row { display: flex; align-items: center; gap: 1rem; }
+
+  .cbtn {
+    padding: 0.5rem 1.1rem; border: 1px solid var(--border);
+    background: transparent; color: var(--text); font-size: 1.1rem;
+    cursor: pointer; border-radius: 4px; transition: all 0.15s;
+    font-family: 'Share Tech Mono', monospace;
+  }
+  .cbtn:hover { border-color: var(--accent); color: var(--accent); background: rgba(56,189,248,0.07); }
+  .cbtn.plus  { border-color: var(--green); color: var(--green); }
+  .cbtn.plus:hover { background: rgba(74,222,128,0.07); }
+
+  .counter-mid { flex: 1; text-align: center; }
+  .counter-num {
+    font-family: 'Orbitron',sans-serif; font-size: 2.8rem; font-weight: 900;
+    color: var(--accent); line-height: 1;
+  }
+  .counter-lbl { font-size: 0.55rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-top: 0.2rem; }
+
+  /* NOTES */
+  .notes-area {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 5px; padding: 1.2rem; margin-bottom: 1rem;
+  }
+
+  .notes-input {
+    width: 100%; min-height: 70px; background: rgba(0,0,0,0.3);
+    border: 1px solid var(--border); border-radius: 3px; color: var(--text);
+    font-family: 'Share Tech Mono',monospace; font-size: 0.74rem;
+    padding: 0.7rem; resize: vertical; outline: none; line-height: 1.6;
+    transition: border-color 0.2s;
+  }
+  .notes-input::placeholder { color: var(--muted); }
+  .notes-input:focus { border-color: rgba(56,189,248,0.35); }
+
+  .notes-save-btn {
+    margin-top: 0.6rem; padding: 0.45rem 1rem; background: transparent;
+    border: 1px solid var(--accent); color: var(--accent);
+    font-family: 'Share Tech Mono',monospace; font-size: 0.68rem;
+    cursor: pointer; border-radius: 3px; transition: all 0.15s; letter-spacing: 0.05em;
+  }
+  .notes-save-btn:hover { background: rgba(56,189,248,0.08); }
+
+  /* LOG */
+  .study-log {
+    background: #020508; border: 1px solid var(--border);
+    border-radius: 5px; padding: 1rem; font-size: 0.67rem;
+  }
+
+  .log-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 0.7rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border);
+  }
+  .log-header-title  { font-size: 0.57rem; color: var(--muted); letter-spacing: 0.15em; text-transform: uppercase; }
+  .log-session-count { font-size: 0.57rem; color: var(--accent3); }
+
+  .log-line { display: flex; gap: 0.8rem; padding: 0.22rem 0; border-bottom: 1px solid rgba(20,32,48,0.5); }
+  .log-line:last-child { border-bottom: none; }
+  .log-t        { color: #1a3040; flex-shrink: 0; }
+  .log-m        { color: #3a6080; }
+  .log-m.ok     { color: var(--green); }
+  .log-m.evt    { color: var(--accent3); }
+  .log-m.err    { color: var(--red); }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 2rem; right: 2rem;
+    background: var(--surface2); border: 1px solid var(--accent);
+    border-left: 3px solid var(--accent); padding: 0.8rem 1.2rem;
+    font-size: 0.72rem; color: var(--accent); z-index: 999;
+    opacity: 0; transform: translateX(20px); transition: all 0.25s;
+    max-width: 260px; border-radius: 4px;
+  }
+  .toast.show { opacity: 1; transform: translateX(0); }
+
+  @keyframes evolve-anim {
+    0%,100% { filter: drop-shadow(0 0 18px rgba(56,189,248,0.35)); }
+    30%     { filter: drop-shadow(0 0 70px rgba(255,255,255,0.9)); transform: scale(1.15) rotate(-4deg); }
+    65%     { filter: drop-shadow(0 0 50px rgba(250,204,21,0.8)); transform: scale(1.1) rotate(3deg); }
+  }
+  .evolving .pet-svg { animation: evolve-anim 1.4s ease-in-out !important; }
+
+  /* Subject color accents per tab */
+  .stab[data-s="mat"]  { }
+  .stab[data-s="len"].active  { color: var(--pink);   border-bottom-color: var(--pink); }
+  .stab[data-s="his"].active  { color: #fb923c;        border-bottom-color: #fb923c; }
+  .stab[data-s="bio"].active  { color: var(--green);  border-bottom-color: var(--green); }
+  .stab[data-s="qui"].active  { color: var(--purple); border-bottom-color: var(--purple); }
+  .stab[data-s="fis"].active  { color: var(--accent); border-bottom-color: var(--accent); }
+  .stab[data-s="ing"].active  { color: #34d399;       border-bottom-color: #34d399; }
+  .stab[data-s="fil"].active  { color: #a78bfa;       border-bottom-color: #a78bfa; }
+  .stab[data-s="art"].active  { color: #fb7185;       border-bottom-color: #fb7185; }
+  .stab[data-s="mus"].active  { color: #f9a8d4;       border-bottom-color: #f9a8d4; }
+  .stab[data-s="edf"].active  { color: #86efac;       border-bottom-color: #86efac; }
+  .stab[data-s="tec"].active  { color: var(--accent3);border-bottom-color: var(--accent3); }
+  .stab[data-s="civ"].active  { color: #f87171;       border-bottom-color: #f87171; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="header-tags">
+      <span class="tag tag-chile">🇨🇱 Chile</span>
+      <span class="tag tag-cl">Clases presenciales</span>
+      <span class="tag tag-mineduc">Plan Mineduc</span>
+    </div>
+    <h1>STUDY-BIT</h1>
+    <div class="subtitle">// tu compañero de colegio</div>
+  </header>
+
+  <!-- PET -->
+  <div class="pet-stage">
+    <span class="fml" style="top:12%;left:4%;transform:rotate(-7deg)">F = ma</span>
+    <span class="fml" style="top:22%;right:3%;transform:rotate(6deg)">∫f(x)dx</span>
+    <span class="fml" style="bottom:18%;left:3%;transform:rotate(5deg)">E=mc²</span>
+    <span class="fml" style="bottom:8%;right:5%;transform:rotate(-6deg)">∇²φ=0</span>
+    <span class="fml" style="top:50%;left:5%;transform:rotate(3deg)">v²=v₀²+2aΔx</span>
+    <span class="fml" style="top:58%;right:4%;transform:rotate(-5deg)">dy/dx</span>
+
+    <div class="pet-wrap" id="petWrap">
+      <svg class="pet-svg" id="petSvg" viewBox="0 0 165 165" fill="none" xmlns="http://www.w3.org/2000/svg" onclick="petClick()">
+        <ellipse cx="82" cy="156" rx="35" ry="5.5" fill="rgba(56,189,248,0.07)"/>
+        <!-- BODY: notebook -->
+        <rect x="30" y="78" width="105" height="72" rx="5" fill="#060e18"/>
+        <rect x="30" y="78" width="105" height="72" rx="5" fill="url(#nbGrad)" opacity="0.95"/>
+        <!-- spiral -->
+        <rect x="28" y="78" width="8" height="72" rx="2" fill="#0a1825"/>
+        <circle cx="32" cy="90"  r="3" fill="#1a3050" stroke="#38bdf8" stroke-width="0.8" opacity="0.7"/>
+        <circle cx="32" cy="103" r="3" fill="#1a3050" stroke="#38bdf8" stroke-width="0.8" opacity="0.7"/>
+        <circle cx="32" cy="116" r="3" fill="#1a3050" stroke="#38bdf8" stroke-width="0.8" opacity="0.7"/>
+        <circle cx="32" cy="129" r="3" fill="#1a3050" stroke="#38bdf8" stroke-width="0.8" opacity="0.7"/>
+        <circle cx="32" cy="142" r="3" fill="#1a3050" stroke="#38bdf8" stroke-width="0.8" opacity="0.7"/>
+        <!-- lines -->
+        <line x1="44" y1="93"  x2="128" y2="93"  stroke="#0f2035" stroke-width="1.2"/>
+        <line x1="44" y1="103" x2="128" y2="103" stroke="#0f2035" stroke-width="1.2"/>
+        <line x1="44" y1="113" x2="128" y2="113" stroke="#0f2035" stroke-width="1.2"/>
+        <line x1="44" y1="123" x2="128" y2="123" stroke="#0f2035" stroke-width="1.2"/>
+        <line x1="44" y1="133" x2="128" y2="133" stroke="#0f2035" stroke-width="1.2"/>
+        <line x1="44" y1="143" x2="128" y2="143" stroke="#0f2035" stroke-width="1.2"/>
+        <!-- formulas written -->
+        <text x="46" y="92"  font-family="monospace" font-size="5.8" fill="#38bdf8" opacity="0.8">x = (-b ± √(b²-4ac)) / 2a</text>
+        <text x="46" y="102" font-family="monospace" font-size="5.8" fill="#facc15" opacity="0.7">F = G·m₁m₂/r²  (Newton)</text>
+        <text x="46" y="112" font-family="monospace" font-size="5.8" fill="#4ade80" opacity="0.65">v² = v₀² + 2a·Δx</text>
+        <text x="46" y="122" font-family="monospace" font-size="5.8" fill="#f472b6" opacity="0.6">∫₀^∞ e^(-x²) dx = √π/2</text>
+        <text x="46" y="132" font-family="monospace" font-size="5.8" fill="#c084fc" opacity="0.55">Célula = unidad de la vida</text>
+        <text x="46" y="142" font-family="monospace" font-size="5.8" fill="#38bdf8" opacity="0.5">E_k = ½mv²   W = F·d</text>
+        <!-- HEAD -->
+        <ellipse cx="82" cy="51" rx="33" ry="29" fill="#060e18"/>
+        <ellipse cx="82" cy="51" rx="33" ry="29" fill="url(#headGrad)" opacity="0.95"/>
+        <!-- cap -->
+        <polygon points="82,22 108,31 82,39 56,31" fill="#0d1e30"/>
+        <polygon points="82,22 108,31 82,39 56,31" fill="url(#capGrad)" opacity="0.9"/>
+        <rect x="78" y="22" width="8" height="4" rx="1" fill="#0a1825"/>
+        <line x1="108" y1="31" x2="113" y2="42" stroke="#facc15" stroke-width="1.5"/>
+        <line x1="113" y1="42" x2="113" y2="50" stroke="#facc15" stroke-width="1.5"/>
+        <circle cx="113" cy="52" r="2.5" fill="#facc15"/>
+        <!-- eyes -->
+        <ellipse cx="69" cy="49" rx="10" ry="10" fill="#030810"/>
+        <ellipse cx="69" cy="49" rx="8"  ry="8"  fill="#38bdf8" opacity="0.8"/>
+        <ellipse cx="67" cy="47" rx="3"  ry="3"  fill="white" opacity="0.65"/>
+        <ellipse cx="69" cy="49" rx="4"  ry="4"  fill="#030810" opacity="0.55"/>
+        <ellipse cx="95" cy="49" rx="10" ry="10" fill="#030810"/>
+        <ellipse cx="95" cy="49" rx="8"  ry="8"  fill="#38bdf8" opacity="0.8"/>
+        <ellipse cx="93" cy="47" rx="3"  ry="3"  fill="white" opacity="0.65"/>
+        <ellipse cx="95" cy="49" rx="4"  ry="4"  fill="#030810" opacity="0.55"/>
+        <!-- glasses -->
+        <rect x="58" y="40" width="22" height="18" rx="2" stroke="#facc15" stroke-width="1.4" fill="none" opacity="0.6"/>
+        <rect x="84" y="40" width="22" height="18" rx="2" stroke="#facc15" stroke-width="1.4" fill="none" opacity="0.6"/>
+        <line x1="80" y1="49" x2="84" y2="49" stroke="#facc15" stroke-width="1.4" opacity="0.6"/>
+        <line x1="58" y1="49" x2="54" y2="47" stroke="#facc15" stroke-width="1.3" opacity="0.5"/>
+        <line x1="106" y1="49" x2="110" y2="47" stroke="#facc15" stroke-width="1.3" opacity="0.5"/>
+        <!-- mouth -->
+        <path d="M 75 65 Q 82 71 89 65" stroke="#38bdf8" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.75"/>
+        <!-- pencil left -->
+        <g transform="translate(28,90) rotate(-18)">
+          <rect x="0" y="0" width="5" height="26" rx="1" fill="#f97316" opacity="0.85"/>
+          <polygon points="0,26 5,26 2.5,32" fill="#e06010"/>
+          <rect x="0" y="0" width="5" height="3.5" rx="0.5" fill="#fca5a5" opacity="0.9"/>
+        </g>
+        <!-- ruler right -->
+        <g transform="translate(120,90) rotate(20)">
+          <rect x="0" y="0" width="6" height="30" rx="1" fill="#facc15" opacity="0.85"/>
+          <line x1="1" y1="6"  x2="4" y2="6"  stroke="#0a1825" stroke-width="0.8"/>
+          <line x1="1" y1="12" x2="4" y2="12" stroke="#0a1825" stroke-width="0.8"/>
+          <line x1="1" y1="18" x2="4" y2="18" stroke="#0a1825" stroke-width="0.8"/>
+          <line x1="1" y1="24" x2="4" y2="24" stroke="#0a1825" stroke-width="0.8"/>
+        </g>
+        <!-- feet -->
+        <ellipse cx="66" cy="150" rx="11" ry="5.5" fill="#060e18"/>
+        <ellipse cx="98" cy="150" rx="11" ry="5.5" fill="#060e18"/>
+        <defs>
+          <linearGradient id="nbGrad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#0d1e30"/><stop offset="100%" stop-color="#060e18"/>
+          </linearGradient>
+          <radialGradient id="headGrad" cx="40%" cy="35%">
+            <stop offset="0%" stop-color="#0f2035"/><stop offset="100%" stop-color="#060e18"/>
+          </radialGradient>
+          <linearGradient id="capGrad" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#163050"/><stop offset="100%" stop-color="#0a1825"/>
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+
+    <div class="pet-name">Study-Bit</div>
+    <div class="pet-rank" id="petRank">// rango: Alumno Nuevo — nivel 1</div>
+    <div class="thought-bubble" id="thoughtBubble">Ábre tu cuaderno y empecemos...</div>
+
+    <div class="xp-row">
+      <span class="xp-lbl">XP</span>
+      <div class="xp-track"><div class="xp-fill" id="xpFill" style="width:0%"></div></div>
+      <span class="xp-rval" id="xpRight">0 / 150 XP</span>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <span class="stat-icon">🔥</span>
+      <span class="stat-value" id="s-streak">0</span>
+      <div class="stat-name">Racha días</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">📐</span>
+      <span class="stat-value" id="s-exercises">0</span>
+      <div class="stat-name">Ejercicios hoy</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">✅</span>
+      <span class="stat-value" id="s-habits">0</span>
+      <div class="stat-name">Hábitos hoy</div>
+    </div>
+    <div class="stat-card">
+      <span class="stat-icon">⚡</span>
+      <span class="stat-value" id="s-xp">0</span>
+      <div class="stat-name">XP total</div>
+    </div>
+  </div>
+
+  <!-- ASIGNATURAS -->
+  <div class="subject-section">
+    <div class="subject-tabs" id="subjectTabs"></div>
+    <div class="subject-body" id="subjectBody"></div>
+  </div>
+
+  <!-- EJERCICIOS -->
+  <div class="ex-counter">
+    <div class="panel-title">Ejercicios resueltos hoy</div>
+    <div class="counter-row">
+      <button class="cbtn" onclick="addExercise(-1)">−</button>
+      <div class="counter-mid">
+        <div class="counter-num" id="exCount">0</div>
+        <div class="counter-lbl">ejercicios hoy (+5 XP c/u)</div>
+      </div>
+      <button class="cbtn plus" onclick="addExercise(1)">+</button>
+    </div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="notes-area">
+    <div class="panel-title">Apuntes / dudas del día</div>
+    <textarea class="notes-input" id="notesInput" placeholder="¿Qué viste en clase hoy? ¿Qué duda tienes? Escribe aquí..."></textarea>
+    <button class="notes-save-btn" onclick="saveNote()">💾 Guardar apunte (+10 XP)</button>
+  </div>
+
+  <!-- LOG -->
+  <div class="study-log">
+    <div class="log-header">
+      <span class="log-header-title">Actividad</span>
+      <span class="log-session-count" id="logXpHoy">0 XP ganados hoy</span>
+    </div>
+    <div id="logContainer">
+      <div class="log-line">
+        <span class="log-t">[ --:-- ]</span>
+        <span class="log-m">Study-Bit listo. ¡Empieza tu primer hábito!</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── ASIGNATURAS Y HÁBITOS ──────────────────────────
+const SUBJECTS = [
+  {
+    id:'mat', label:'Mat', name:'Matemática', icon:'📐', col:'#38bdf8',
+    habits:[
+      { id:'mat1', label:'Resolví ejercicios del libro',           xp:20 },
+      { id:'mat2', label:'Entendí el procedimiento (no solo el resultado)', xp:25 },
+      { id:'mat3', label:'Repasé materia antes de la clase',        xp:15 },
+      { id:'mat4', label:'Corregí errores de una prueba/guía',      xp:25 },
+    ]
+  },
+  {
+    id:'len', label:'Len', name:'Lenguaje', icon:'📖', col:'#f472b6',
+    habits:[
+      { id:'len1', label:'Leí el texto asignado completo',           xp:20 },
+      { id:'len2', label:'Hice análisis literario / comentario',     xp:25 },
+      { id:'len3', label:'Redacté o corregí un texto escrito',       xp:20 },
+      { id:'len4', label:'Repasé ortografía y gramática',            xp:15 },
+    ]
+  },
+  {
+    id:'his', label:'His', name:'Historia', icon:'🗺️', col:'#fb923c',
+    habits:[
+      { id:'his1', label:'Leí los contenidos de la unidad',          xp:20 },
+      { id:'his2', label:'Hice línea de tiempo o mapa conceptual',   xp:20 },
+      { id:'his3', label:'Respondí preguntas de desarrollo',         xp:25 },
+      { id:'his4', label:'Analicé fuente histórica o documento',     xp:25 },
+    ]
+  },
+  {
+    id:'bio', label:'Bio', name:'Biología', icon:'🔬', col:'#4ade80',
+    habits:[
+      { id:'bio1', label:'Estudié los conceptos clave del tema',     xp:20 },
+      { id:'bio2', label:'Dibujé o identifiqué estructuras celulares/organelas', xp:20 },
+      { id:'bio3', label:'Respondí preguntas de la guía',            xp:20 },
+      { id:'bio4', label:'Expliqué el proceso con mis palabras',     xp:25 },
+    ]
+  },
+  {
+    id:'qui', label:'Qui', name:'Química', icon:'⚗️', col:'#c084fc',
+    habits:[
+      { id:'qui1', label:'Resolví ejercicios de estequiometría/mol', xp:25 },
+      { id:'qui2', label:'Balanceé reacciones químicas',             xp:20 },
+      { id:'qui3', label:'Estudié tabla periódica / propiedades',    xp:15 },
+      { id:'qui4', label:'Entendí el mecanismo de la reacción',      xp:25 },
+    ]
+  },
+  {
+    id:'fis', label:'Fís', name:'Física', icon:'🔭', col:'#38bdf8',
+    habits:[
+      { id:'fis1', label:'Resolví problemas con fórmulas aplicadas', xp:25 },
+      { id:'fis2', label:'Dibujé diagrama de cuerpo libre / sistema',xp:20 },
+      { id:'fis3', label:'Entendí el concepto detrás del ejercicio', xp:25 },
+      { id:'fis4', label:'Verifiqué unidades (análisis dimensional)', xp:15 },
+    ]
+  },
+  {
+    id:'ing', label:'Ing', name:'Inglés', icon:'🌐', col:'#34d399',
+    habits:[
+      { id:'ing1', label:'Aprendí vocabulario nuevo (10+ palabras)', xp:15 },
+      { id:'ing2', label:'Practiqué gramática (tenses / estructura)', xp:20 },
+      { id:'ing3', label:'Leí o escuché texto en inglés',            xp:20 },
+      { id:'ing4', label:'Escribí un párrafo en inglés',             xp:25 },
+    ]
+  },
+  {
+    id:'fil', label:'Fil', name:'Filosofía', icon:'🧠', col:'#a78bfa',
+    habits:[
+      { id:'fil1', label:'Leí el texto filosófico asignado',         xp:20 },
+      { id:'fil2', label:'Formulé un argumento propio',              xp:25 },
+      { id:'fil3', label:'Identifiqué falacias o errores lógicos',   xp:20 },
+      { id:'fil4', label:'Comparé posturas de distintos filósofos',  xp:20 },
+    ]
+  },
+  {
+    id:'art', label:'Art', name:'Artes Vis.', icon:'🎨', col:'#fb7185',
+    habits:[
+      { id:'art1', label:'Trabajé en mi obra / proyecto artístico',  xp:20 },
+      { id:'art2', label:'Estudié técnica o corriente artística',    xp:15 },
+      { id:'art3', label:'Analicé obra de un artista / movimiento',  xp:20 },
+      { id:'art4', label:'Esbocé ideas para la próxima tarea',       xp:15 },
+    ]
+  },
+  {
+    id:'mus', label:'Mús', name:'Música', icon:'🎵', col:'#f9a8d4',
+    habits:[
+      { id:'mus1', label:'Practiqué instrumento o voz (20+ min)',    xp:20 },
+      { id:'mus2', label:'Estudié teoría musical / lectura',         xp:15 },
+      { id:'mus3', label:'Analicé una obra musical asignada',        xp:20 },
+      { id:'mus4', label:'Ensayé con el grupo / ensamble',           xp:25 },
+    ]
+  },
+  {
+    id:'edf', label:'Ed.F', name:'Ed. Física', icon:'⚽', col:'#86efac',
+    habits:[
+      { id:'edf1', label:'Realicé actividad física (30+ min)',       xp:20 },
+      { id:'edf2', label:'Estudié reglamento / táctica deportiva',   xp:15 },
+      { id:'edf3', label:'Practiqué habilidad motriz específica',    xp:20 },
+      { id:'edf4', label:'Completé tarea teórica de la asignatura',  xp:15 },
+    ]
+  },
+  {
+    id:'tec', label:'Tec', name:'Tecnología', icon:'💻', col:'#facc15',
+    habits:[
+      { id:'tec1', label:'Avancé en el proyecto / prototipo',        xp:25 },
+      { id:'tec2', label:'Aprendí herramienta o software nuevo',     xp:20 },
+      { id:'tec3', label:'Documenté el proceso de diseño',           xp:15 },
+      { id:'tec4', label:'Probé y corregí errores del proyecto',     xp:20 },
+    ]
+  },
+  {
+    id:'civ', label:'Ed.C', name:'Ed. Ciudadana', icon:'🏛️', col:'#f87171',
+    habits:[
+      { id:'civ1', label:'Leí artículo sobre actualidad nacional',   xp:15 },
+      { id:'civ2', label:'Estudié instituciones / Constitución',     xp:20 },
+      { id:'civ3', label:'Debatí o argumenté sobre tema ciudadano',  xp:25 },
+      { id:'civ4', label:'Analicé un problema social con evidencia', xp:20 },
+    ]
+  },
+];
+
+const LEVELS = [
+  { min:0,    max:150,  name:'Alumno Nuevo',          col:'#38bdf8' },
+  { min:150,  max:400,  name:'Estudiante Constante',  col:'#60d0fa' },
+  { min:400,  max:800,  name:'Aplicado de Verdad',    col:'#facc15' },
+  { min:800,  max:1400, name:'Crack del Curso',        col:'#fb923c' },
+  { min:1400, max:2200, name:'Honor Roll 🏅',          col:'#f472b6' },
+  { min:2200, max:9999, name:'Leyenda del Colegio 🎓', col:'#4ade80' },
+];
+
+const THOUGHTS = [
+  'Ábre tu cuaderno y empecemos...',
+  '¡Un hábito completado! Sigue así 💪',
+  'La constancia gana a la velocidad.',
+  'Repasa los apuntes antes de dormir.',
+  '¿Ya hiciste los ejercicios de hoy?',
+  'Explica lo que aprendiste. Si puedes, lo entendiste.',
+  'Ya ves los patrones entre ramos 🔬',
+  '¡Eres una leyenda del colegio!',
+];
+
+const CLICK_MSGS = [
+  '¿Ya hiciste los ejercicios del día?',
+  'Toma agua. El cerebro lo agradece.',
+  '¿Revisaste los errores de la última prueba?',
+  'Un concepto entendido vale diez memorizados.',
+  '¿Cuándo es el próximo examen? 👀',
+  'Pregunta en clases. No hay preguntas malas.',
+  'Desconéctate 5 min, luego vuelves más fuerte.',
+  'La PSU/PAES se construye día a día.',
+];
+
+// ─── STATE ──────────────────────────────────────────
+let state = (() => {
+  try {
+    return {
+      xpTotal:0, streak:0, exercisesToday:0,
+      completedToday:[], log:[], clicks:0, lastDay:null,
+      xpToday:0,
+      ...JSON.parse(localStorage.getItem('studybit_cl')||'{}')
+    };
+  } catch(e) {
+    return {xpTotal:0,streak:0,exercisesToday:0,completedToday:[],log:[],clicks:0,lastDay:null,xpToday:0};
+  }
+})();
+
+let activeSubject = SUBJECTS[0].id;
+
+function save() { try { localStorage.setItem('studybit_cl', JSON.stringify(state)); } catch(e){} }
+
+function getLvlIdx() {
+  for (let i = LEVELS.length-1; i >= 0; i--)
+    if (state.xpTotal >= LEVELS[i].min) return i;
+  return 0;
+}
+
+// ─── TABS ───────────────────────────────────────────
+function buildTabs() {
+  const tabsEl = document.getElementById('subjectTabs');
+  tabsEl.innerHTML = SUBJECTS.map(s =>
+    `<button class="stab ${s.id===activeSubject?'active':''}" data-s="${s.id}" onclick="switchSubject('${s.id}')">${s.label}</button>`
+  ).join('');
+}
+
+function switchSubject(id) {
+  activeSubject = id;
+  buildTabs();
+  renderSubjectBody();
+}
+
+function renderSubjectBody() {
+  const s = SUBJECTS.find(x => x.id===activeSubject);
+  const doneCount = s.habits.filter(h => state.completedToday.includes(h.id)).length;
+  const xpEarned = s.habits.filter(h => state.completedToday.includes(h.id)).reduce((a,h)=>a+h.xp,0);
+
+  document.getElementById('subjectBody').innerHTML = `
+    <div class="subject-header">
+      <span class="subject-icon">${s.icon}</span>
+      <span class="subject-name" style="color:${s.col}">${s.name}</span>
+      <span class="subject-xp-today">${doneCount}/${s.habits.length} hábitos · +${xpEarned} XP hoy</span>
+    </div>
+    <div class="habits-grid">
+      ${s.habits.map(h => {
+        const done = state.completedToday.includes(h.id);
+        return `<div class="habit-item ${done?'done':''}" onclick="toggleHabit('${h.id}')">
+          <div class="habit-cb">${done?'✓':''}</div>
+          <div class="habit-body">
+            <span class="habit-label">${h.label}</span>
+            <span class="habit-xp">+${h.xp} XP</span>
+          </div>
+        </div>`;
+      }).join('')}
+    </div>
+  `;
+}
+
+// ─── RENDER ─────────────────────────────────────────
+function render() {
+  const li = getLvlIdx();
+  const lvl = LEVELS[li];
+  const next = LEVELS[Math.min(li+1, LEVELS.length-1)];
+  const pct = li===LEVELS.length-1 ? 100
+    : Math.min(100, ((state.xpTotal-lvl.min)/(next.min-lvl.min))*100);
+
+  document.getElementById('petRank').textContent = `// rango: ${lvl.name} — nivel ${li+1}`;
+  document.getElementById('xpFill').style.cssText = `width:${pct}%; background:linear-gradient(90deg,${lvl.col},${lvl.col}88); box-shadow:0 0 12px ${lvl.col}60;`;
+  document.getElementById('xpRight').style.color = lvl.col;
+  document.getElementById('xpRight').textContent = `${state.xpTotal} / ${next.min} XP`;
+
+  document.getElementById('s-streak').textContent = state.streak;
+  document.getElementById('s-exercises').textContent = state.exercisesToday;
+  document.getElementById('s-habits').textContent = state.completedToday.length;
+  document.getElementById('s-xp').textContent = state.xpTotal;
+  document.getElementById('exCount').textContent = state.exercisesToday;
+  document.getElementById('logXpHoy').textContent = `${state.xpToday} XP ganados hoy`;
+
+  const ti = Math.min(Math.floor(state.xpTotal/280), THOUGHTS.length-1);
+  document.getElementById('thoughtBubble').textContent = THOUGHTS[ti];
+
+  buildTabs();
+  renderSubjectBody();
+  renderLog();
+}
+
+function renderLog() {
+  if (!state.log.length) return;
+  document.getElementById('logContainer').innerHTML = state.log.slice(-12).reverse().map(e =>
+    `<div class="log-line">
+      <span class="log-t">[ ${e.t} ]</span>
+      <span class="log-m ${e.cls||''}">${e.m}</span>
+    </div>`
+  ).join('');
+}
+
+function addLog(m, cls='') {
+  const t = new Date().toLocaleTimeString('es',{hour:'2-digit',minute:'2-digit'});
+  state.log.push({t,m,cls});
+  if (state.log.length > 20) state.log.shift();
+}
+
+function gainXP(amount) {
+  const oldLi = getLvlIdx();
+  state.xpTotal += amount;
+  state.xpToday = (state.xpToday||0) + amount;
+  checkLvlUp(oldLi);
+}
+
+function checkLvlUp(oldLi) {
+  const newLi = getLvlIdx();
+  if (newLi > oldLi) {
+    addLog(`>>> ¡NIVEL ${newLi+1}: ${LEVELS[newLi].name}! <<<`, 'evt');
+    showToast(`🎉 ¡Nivel ${newLi+1}: ${LEVELS[newLi].name}!`, 3000);
+    const wrap = document.getElementById('petWrap');
+    wrap.classList.add('evolving');
+    setTimeout(() => wrap.classList.remove('evolving'), 1400);
+  }
+}
+
+function toggleHabit(id) {
+  const subject = SUBJECTS.find(s => s.habits.some(h => h.id===id));
+  const h = subject?.habits.find(x => x.id===id);
+  if (!h) return;
+
+  if (state.completedToday.includes(id)) {
+    state.completedToday = state.completedToday.filter(x => x!==id);
+    state.xpTotal = Math.max(0, state.xpTotal - h.xp);
+    state.xpToday = Math.max(0, (state.xpToday||0) - h.xp);
+    addLog(`[-] ${subject.name}: ${h.label} (-${h.xp} XP)`);
+    showToast(`-${h.xp} XP`);
+  } else {
+    state.completedToday.push(id);
+    gainXP(h.xp);
+    addLog(`[+] ${subject.name}: ${h.label} (+${h.xp} XP)`, 'ok');
+    showToast(`+${h.xp} XP — ${subject.name}`);
+  }
+  save(); render();
+}
+
+function addExercise(delta) {
+  state.exercisesToday = Math.max(0, state.exercisesToday + delta);
+  if (delta > 0) {
+    gainXP(5);
+    addLog('📐 Ejercicio resuelto (+5 XP)', 'ok');
+    showToast('+5 XP — ¡ejercicio resuelto!');
+  }
+  save(); render();
+}
+
+function saveNote() {
+  const txt = document.getElementById('notesInput').value.trim();
+  if (!txt) { showToast('Escribe algo primero ✏️'); return; }
+  gainXP(10);
+  addLog(`✏️ Apunte guardado (+10 XP): "${txt.slice(0,35)}${txt.length>35?'...':''}"`, 'ok');
+  showToast('+10 XP — ¡apunte guardado!');
+  save(); render();
+}
+
+function petClick() {
+  state.clicks = (state.clicks||0)+1;
+  const msg = CLICK_MSGS[state.clicks % CLICK_MSGS.length];
+  document.getElementById('thoughtBubble').textContent = msg;
+  addLog(`>>> ${msg}`);
+  save(); renderLog();
+}
+
+function showToast(msg, dur=2500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
+}
+
+function checkDay() {
+  const today = new Date().toDateString();
+  if (state.lastDay !== today) {
+    const yday = new Date(); yday.setDate(yday.getDate()-1);
+    const hadActivity = state.completedToday.length > 0 || state.exercisesToday > 0;
+    if (state.lastDay === yday.toDateString() && hadActivity) {
+      state.streak++;
+      addLog(`>>> Racha: ${state.streak} días seguidos 🔥`, 'evt');
+    } else if (state.lastDay && !hadActivity) {
+      state.streak = 0;
+      addLog('Racha rota. ¡Mañana es otro día!', 'err');
+    }
+    state.completedToday = [];
+    state.exercisesToday = 0;
+    state.xpToday = 0;
+    state.lastDay = today;
+    save();
+  }
+}
+
+// Restore note
+const savedNote = localStorage.getItem('studybit_cl_note');
+if (savedNote) document.getElementById('notesInput').value = savedNote;
+document.getElementById('notesInput').addEventListener('input', e => {
+  localStorage.setItem('studybit_cl_note', e.target.value);
+});
+
+checkDay();
+render();
+</script>
+</body>
+</html>
