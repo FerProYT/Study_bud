@@ -277,6 +277,7 @@ ALTER TABLE progress DISABLE ROW LEVEL SECURITY;</pre>
     </div>
     <div style="display:flex;gap:.6rem;align-items:center;">
       <span class="role-badge role-admin">ADMIN</span>
+      <button class="btn sm" onclick="showScreen('appScreen')">← App</button>
       <button class="btn sm danger" onclick="doLogout()">Salir</button>
     </div>
   </div>
@@ -664,13 +665,9 @@ async function doLogin(){
     session = {username:user.username, name:user.name, role:user.role};
     setSession(session);
 
-    if(user.role==='admin'){
-      showScreen('adminScreen');
-      loadUsers();
-    } else {
-      showScreen('appScreen');
-      await initApp();
-    }
+    // Both roles go to the app — admins get the ⚙ Admin button
+    showScreen('appScreen');
+    await initApp();
   } catch(e) {
     errEl.textContent='Error de conexión. Verifica las credenciales de Supabase.';
     errEl.style.display='block';
@@ -993,8 +990,7 @@ if(!CONFIGURED){
   const s=getSession();
   if(s){
     session=s;
-    if(s.role==='admin'){ showScreen('adminScreen'); loadUsers(); }
-    else { showScreen('appScreen'); initApp(); }
+    showScreen('appScreen'); initApp();
   } else {
     showScreen('loginScreen');
   }
