@@ -300,9 +300,17 @@ ALTER TABLE progress DISABLE ROW LEVEL SECURITY;</pre>
       <div class="field" style="margin:0;"><label>Nombre para mostrar</label><input type="text" id="newName" placeholder="Juan Pérez"/></div>
     </div>
     <div class="form-row" style="margin-top:.8rem;">
-      <div class="field" style="margin:0;"><label>Contraseña</label><input type="password" id="newPass" placeholder="mínimo 4 caracteres"/></div>
+      <div class="field" style="margin:0;"><label>Contraseña del nuevo usuario</label><input type="password" id="newPass" placeholder="mínimo 4 caracteres"/></div>
       <div class="field" style="margin:0;"><label>Rol</label>
-        <select id="newRole"><option value="user">Alumno</option><option value="admin">Admin</option></select>
+        <select id="newRole" onchange="toggleMasterField()"><option value="user">Alumno</option><option value="admin">Admin</option></select>
+      </div>
+    </div>
+    <!-- Campo contraseña maestra — solo visible al crear Admin -->
+    <div id="masterField" style="display:none;margin-top:.8rem;">
+      <div class="field" style="margin:0;background:rgba(249,115,22,.05);border:1px solid rgba(249,115,22,.25);border-radius:4px;padding:.8rem;">
+        <label style="color:var(--accent2);">🔐 Contraseña maestra (requerida para crear admins)</label>
+        <input type="password" id="masterPass" placeholder="Solo tú la sabes"/>
+        <div style="font-size:.58rem;color:var(--muted);margin-top:.4rem;">Define esta clave en el código: busca <code>MASTER_PASSWORD</code></div>
       </div>
     </div>
     <button class="btn green" style="margin-top:1rem;" onclick="createUser()">+ CREAR USUARIO</button>
@@ -687,23 +695,43 @@ async function loadUsers(){
     const users = await sb('GET','users',{select:'*'}) || [];
     const progList = await sb('GET','progress',{select:'username,xp_total,streak'}) || [];
     const progMap = Object.fromEntries(progList.map(p=>[p.username,p]));
+
+    // Count how many admins exist total
+    const adminCount = users.filter(u=>u.role==='admin').length;
+
     tbody.innerHTML = users.map(u=>{
       const p = progMap[u.username]||{xp_total:0,streak:0};
+      // "admin" default can be deleted only if there's at least one other admin
+      const isDefaultAdmin = u.username==='admin';
+      const canDelete = !isDefaultAdmin || adminCount > 1;
       return `<tr>
         <td><code>${u.username}</code></td>
         <td>${u.name}</td>
         <td><span class="role-badge role-${u.role}">${u.role==='admin'?'Admin':'Alumno'}</span></td>
         <td><span class="stat-pill">${p.xp_total||0} XP</span></td>
         <td>${p.streak||0} días 🔥</td>
-        <td>${u.username==='admin'
-          ?'<span style="color:var(--muted);font-size:.58rem;">—</span>'
-          :`<button class="btn sm danger" onclick="deleteUser('${u.username}')">Eliminar</button>`}
+        <td>${canDelete
+          ?`<button class="btn sm danger" onclick="deleteUser('${u.username}')">Eliminar</button>`
+          :`<span style="color:var(--muted);font-size:.58rem;">Crea otro admin primero</span>`}
         </td>
       </tr>`;
     }).join('');
   } catch(e) {
     tbody.innerHTML='<tr><td colspan="6" style="color:var(--red);padding:.8rem;">Error al cargar.</td></tr>';
   }
+}
+
+/* ══════════════════════════════════════════
+   ▼▼▼  CONTRASEÑA MAESTRA PARA CREAR ADMINS  ▼▼▼
+   Cámbiala por una que solo tú sepas
+══════════════════════════════════════════ */
+const MASTER_PASSWORD = 'Nandito1.';
+/* ▲▲▲ FIN ▲▲▲ */
+
+function toggleMasterField(){
+  const role = document.getElementById('newRole').value;
+  document.getElementById('masterField').style.display = role==='admin' ? 'block' : 'none';
+  if(role!=='admin') document.getElementById('masterPass').value='';
 }
 
 async function createUser(){
@@ -718,6 +746,15 @@ async function createUser(){
   if(!username||!name||!password){ errEl.textContent='Completa todos los campos.'; errEl.style.display='block'; return; }
   if(password.length<4){ errEl.textContent='Contraseña mínimo 4 caracteres.'; errEl.style.display='block'; return; }
 
+  // Verificar contraseña maestra al crear admin
+  if(role==='admin'){
+    const master = document.getElementById('masterPass').value;
+    if(master !== MASTER_PASSWORD){
+      errEl.textContent='Contraseña maestra incorrecta.';
+      errEl.style.display='block'; return;
+    }
+  }
+
   try {
     const existing = await sb('GET','users',{filter:`username=eq.${encodeURIComponent(username)}`,single:true});
     if(existing){ errEl.textContent='Ese usuario ya existe.'; errEl.style.display='block'; return; }
@@ -725,6 +762,9 @@ async function createUser(){
     document.getElementById('newUser').value='';
     document.getElementById('newName').value='';
     document.getElementById('newPass').value='';
+    document.getElementById('masterPass').value='';
+    document.getElementById('newRole').value='user';
+    document.getElementById('masterField').style.display='none';
     okEl.textContent=`✅ Usuario "${username}" creado.`;
     okEl.style.display='block';
     showToast(`✅ "${username}" creado`);
